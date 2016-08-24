@@ -1,3 +1,5 @@
+require 'csv'
+
 class WordGuess
   def initialize(debug = false)
     # are we in debug mode?
@@ -5,13 +7,13 @@ class WordGuess
 
     # possible words, selected at random
     @words = {
-      "e" => %w(dog cat bug hat cap lit kin fan fin fun tan ten tin ton),
-      "m" => %w(plain claim brine crime alive bride skine drive slime stein jumpy),
-      "h" => %w(
-          machiavellian prestidigitation plenipotentiary quattuordecillion
-          magnanimous unencumbered bioluminescent circumlocution
-        )
-    }
+      "e" => nil,
+      "m" => nil,
+      "h" => nil
+      }
+
+    # Load the data from csv to @words hash
+    load_data #if i put @words = load_data then i will need to return @words in my load_data method definition
 
     # players attempts allowed by difficulty
     @tries = {
@@ -39,6 +41,20 @@ class WordGuess
 
     # start the first turn
     play_turn
+  end
+
+  def load_data
+    CSV.read("words.csv").each do |line| #read will convert the csv lines into arrays
+      # @words[line[0]] = line[1..-1] #if i want to store every line. at the intializer, my @words should be an empty hash #@words = {}
+      #i'd use the if loop if i only filter data that start with 'e' or 'm' or 'h' // also line[1..line.length-1]
+      if line[0] == "e"
+        @words["e"] = line[1..-1] # I shouldn't put a 'return' in front of this line because return will end the method prematurely. if my line[0] is 'm' or 'h' then no new hash will be created.
+      elsif line[0] == "m"
+        @words["m"] = line[1..-1]
+      elsif line[0] == "h"
+        @words["h"] = line[1..-1]
+      end
+    end
   end
 
   def play_turn
@@ -129,6 +145,8 @@ class WordGuess
 
     letter
   end
+
 end
+
 
 WordGuess.new
